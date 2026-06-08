@@ -269,7 +269,8 @@
 
         .talent-label {
             color: #666;
-            font-size: 1.1em;
+            font-size: 2.2em;
+            font-weight: bold;
         }
 
         .empty-message {
@@ -435,9 +436,9 @@
 
         // 주단위 달란트에 따른 메시지 생성
         function getWeeklyMessage(talentCount) {
-            if (talentCount >= 5) return '최고!!';
-            if (talentCount >= 3) return '잘하고 있어!!';
-            return '힘내!!';  // 0~2개
+            if (talentCount >= 5) return '🌟 최고!!';
+            if (talentCount >= 3) return '👍 잘하고 있어!!';
+            return '💪 힘내!!';  // 0~2개
         }
 
         function loadTalentData() {
