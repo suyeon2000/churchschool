@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습자료 - 한영교회 주일학교</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 네비게이션 */
+        nav {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 제목 */
+        h1 {
+            text-align: center;
+            color: #3B5998;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        /* 학생 선택 */
+        .student-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .student-btn {
+            padding: 15px 20px;
+            border: 2px solid #ccc;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .student-btn:hover {
+            border-color: #3B5998;
+            color: #3B5998;
+        }
+
+        .student-btn.active {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            color: white;
+            border-color: #3B5998;
+        }
+
+        .student-btn.junyoung { border-left: 4px solid #3B5998; }
+        .student-btn.yerim { border-left: 4px solid #8B6BB8; }
+        .student-btn.joshua { border-left: 4px solid #2E7D32; }
+        .student-btn.elliot { border-left: 4px solid #F57C00; }
+        .student-btn.anna { border-left: 4px solid #C2185B; }
+        .student-btn.moses { border-left: 4px solid #E53935; }
+
+        /* 학습자료 갤러리 */
+        .gallery {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery h2 {
+            color: #3B5998;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 15px;
+        }
+
+        .gallery-info {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .gallery-info p {
+            margin: 10px 0;
+        }
+
+        .gallery-info strong {
+            color: #3B5998;
+        }
+
+        /* 아직 학습지가 없는 경우 */
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-message .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-message p {
+            font-size: 1.2em;
+        }
+
+        /* 학습지 사진 */
+        .worksheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .worksheet {
+            background: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .worksheet:hover {
+            transform: translateY(-5px);
+        }
+
+        .worksheet-placeholder {
+            width: 100%;
+            height: auto;
+            background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+        }
+
+        .worksheet-info {
+            padding: 15px;
+            background: white;
+        }
+
+        .worksheet-date {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .worksheet-title {
+            color: #3B5998;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        /* 날짜별 섹션 */
+        .date-section {
+            margin-bottom: 40px;
+        }
+
+        .date-header {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-header .calendar-icon {
+            font-size: 1.3em;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #3B5998;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .student-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .worksheets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 홈</a></li>
+            <li><a href="learning.html">📚 학습자료</a></li>
+            <li><a href="talents.html">⭐ 달란트</a></li>
+        </ul>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <h1>📚 학습자료</h1>
+
+        <!-- 학생 선택 -->
+        <div class="student-selector">
+            <a href="student_junyoung.html" class="student-btn active junyoung">Junyoung</a>
+            <a href="student_yerim.html" class="student-btn yerim">Yerim</a>
+            <a href="student_joshua.html" class="student-btn joshua">Joshua</a>
+            <a href="student_elliot.html" class="student-btn elliot">Elliot</a>
+            <a href="student_anna.html" class="student-btn anna">Anna</a>
+            <a href="student_moses.html" class="student-btn moses">Moses</a>
+        </div>
+
+        <!-- 갤러리 -->
+        <div class="gallery">
+            <h2 id="studentName">주일학교 학습자료</h2>
+
+            <div class="gallery-info">
+                <p><strong>📝 학습 구성:</strong> Words to Memorize (영단어), Dictation (받아쓰기), Today's Lesson (교훈)</p>
+                <p><strong>📅 업데이트:</strong> 매주 주일 수업 후 게시됩니다</p>
+                <p><strong>💾 관리:</strong> 개별 학습지를 파일로 철해서 보관합니다</p>
+            </div>
+
+            <div id="worksheetContainer">
+                <!-- 학습지가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer>
+        <p>&copy; 2024 한영교회 주일학교. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 학생별 학습자료 데이터
+                                                                                                                                                                const studentData = {
+            junyoung: {
+                name: 'Junyoung',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/junyoung_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/junyoung_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/junyoung_20260607_1.jpg' }
+                ]
+            },
+            yerim: {
+                name: 'Yerim',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/yerim_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/yerim_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/yerim_20260607_1.jpg' }
+                ]
+            },
+            joshua: {
+                name: 'Joshua',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/joshua_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/joshua_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/joshua_20260607_1.jpg' }
+                ]
+            },
+            elliot: {
+                name: 'Elliot',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/elliot_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/elliot_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/elliot_20260607_1.jpg' }
+                ]
+            },
+            anna: {
+                name: 'Anna',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/anna_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/anna_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/anna_20260607_1.jpg' }
+                ]
+            },
+            moses: {
+                name: 'Moses',
+                worksheets: [
+                    { title: 'Page 1', date: '2026-05-31', image: 'picture/moses_20260531_1.jpg' },
+                    { title: 'Page 2', date: '2026-05-31', image: 'picture/moses_20260531_2.jpg' },
+                    { title: 'Page 1', date: '2026-06-07', image: 'picture/moses_20260607_1.jpg' }
+                ]
+            }
+        };
+
+        function showStudent(studentId) {
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.student-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 학생명 업데이트
+            document.getElementById('studentName').textContent = studentData[studentId].name + '의 학습자료';
+
+            // 학습자료 표시
+            const container = document.getElementById('worksheetContainer');
+
+            // 컨테이너 CSS 초기화 (상위 요소의 flex/grid 무시)
+            container.style.display = 'block';
+            container.style.width = '100%';
+            container.style.flexWrap = 'wrap';
+
+            const worksheets = studentData[studentId].worksheets;
+
+            if (worksheets.length === 0) {
+                container.innerHTML = '';
+            } else {
+                // 날짜별로 그룹화
+                const groupedByDate = {};
+                worksheets.forEach(sheet => {
+                    if (!groupedByDate[sheet.date]) {
+                        groupedByDate[sheet.date] = [];
+                    }
+                    groupedByDate[sheet.date].push(sheet);
+                });
+
+                // 날짜순으로 정렬 (최신순 - 가까운 날짜가 위로)
+                const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+
+                // HTML 생성
+                let html = '';
+                sortedDates.forEach(date => {
+                    const dateObj = new Date(date);
+                    const formattedDate = dateObj.toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    html += `<div class="date-section" style="display: block !important; width: 100% !important; clear: both !important;">
+                        <div class="date-header">
+                            <span class="calendar-icon">📅</span>
+                            ${formattedDate}
+                        </div>
+                        <div class="worksheets-grid" style="display: grid !important; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; gap: 20px !important;">
+                            ${groupedByDate[date].map(sheet => `
+                                <div class="worksheet">
+                                    <img src="${sheet.image}" alt="${sheet.title}" style="width: 100%; height: auto; object-fit: contain; display: block;">
+                                    <div class="worksheet-info">
+                                        <div class="worksheet-date">${sheet.date}</div>
+                                        <di

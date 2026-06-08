@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - 한영교회 주일학교</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        .container {
+            margin: 40px auto;
+            padding: 0 20px;
+            max-width: 1400px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        h1 {
+            color: #3B5998;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .status.show { display: block; }
+        .status.success { background: #c8e6c9; color: #2e7d32; }
+        .status.error { background: #ffcdd2; color: #d32f2f; }
+        .status.loading { background: #e3f2fd; color: #1976d2; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            border: 2px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: linear-gradient(135deg, #3B5998 0%, #2E4A7A 100%);
+            color: white;
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        td {
+            background: #f9f9f9;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #3B5998;
+            text-align: left;
+            min-width: 100px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            height: 45px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1.3em;
+            font-weight: 600;
+            text-align: center;
+            box-sizing: border-box;
+            line-height: 29px;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3B5998;
+            background: #f0f8ff;
+        }
+
+        .total-cell {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffacd 100%);
+            font-weight: bold;
+            color: #ff6b00;
+            min-width: 70px;
+        }
+
+        .initial-cell {
+            background: #e8f5e9;
+            font-weight: 600;
+        }
+
+        .month-group {
+            border-right: 3px solid #3B5998;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            color: white;
+            min-width: 200px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        footer {
+            background: #3B5998;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 1024px) {
+            table {
+                font-size: 0.8em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 홈</a></li>
+            <li><a href="learning.html">📚 학습자료</a></li>
+            <li><a href="talents.html">⭐ 달란트</a></li>
+        </ul>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <div class="admin-card">
+            <h1>🔐 관리자 페이지 - 달란트 관리 (2026년)</h1>
+
+            <div id="status" class="status"></div>
+
+            <div class="table-wrapper">
+                <table id="talentTable">
+                    <thead>
+                        <tr>
+                            <th>학생</th>
+                            <th class="total-cell">누적</th>
+                            <th class="initial-cell">최초</th>
+                            <th colspan="4" class="month-group">6월</th>
+                            <th colspan="4" class="month-group">7월</th>
+                            <th colspan="5" class="month-group">8월</th>
+                            <th colspan="4" class="month-group">9월</th>
+                            <th colspan="4" class="month-group">10월</th>
+                            <th colspan="5" class="month-group">11월</th>
+                            <th colspan="4" class="month-group">12월</th>
+                        </tr>
+                        <tr>
+                            <th colspan="3"></th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>5주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>5주</th>
+                            <th>1주</th><th>2주</th><th>3주</th><th>4주</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- JavaScript로 동적 생성 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-save" onclick="saveTalents()">💾 저장 및 배포</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer>
+        <p>&copy; 2024 한영교회 주일학교. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const students = ['junyoung', 'joshua', 'elliot', 'anna', 'moses', 'yerim'];
+        const studentNames = {
+            'junyoung': 'Junyoung',
+            'joshua': 'Joshua',
+            'elliot': 'Elliot',
+            'anna': 'Anna',
+            'moses': 'Moses',
+            'yerim': 'Yerim'
+        };
+
+        // 2026년 월별 주 개수
+        const weeksPerMonth = {
+            '6': 4, '7': 4, '8': 5, '9': 4, '10': 4, '11': 5, '12': 4
+        };
+
+        // 월 이름
+        const monthNames = {
+            '6': '6월', '7': '7월', '8': '8월', '9': '9월',
+            '10': '10월', '11': '11월', '12': '12월'
+        };
+
+        function generateTableRows() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            students.forEach(studentId => {
+                const row = document.createElement('tr');
+
+                // 학생 이름
+                const nameCell = document.createElement('td');
+                nameCell.className = 'student-name';
+                nameCell.textContent = studentNames[studentId];
+                row.appendChild(nameCell);
+
+                // 누적 달란트 (읽기 전용)
+                const totalCell = document.createElement('td');
+                totalCell.className = 'total-cell';
+                totalCell.id = `${studentId}-total`;
+                totalCell.textContent = '0';
+                row.appendChild(totalCell);
+
+                // 최초 달란트
+                const initialCell = document.createElement('td');
+                initialCell.className = 'initial-cell';
+                const initialInput = document.createElement('input');
+                initialInput.type = 'number';
+                initialInput.id = `${studentId}-initial`;
+                initialInput.min = '0';
+                initialInput.value = '0';
+                initialInput.onchange = () => updateTotal(studentId);
+                initialCell.appendChild(initialInput);
+                row.appendChild(initialCell);
+
+                // 각 월별 주 입력 칸
+                for (let month of ['6', '7', '8', '9', '10', '11', '12']) {
+                    const weeks = weeksPerMonth[month];
+                    for (let week = 1; week <= weeks; week++) {
+                        const cell = document.createElement('td');
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.id = `${studentId}-${month}-${week}`;
+                        input.min = '0';
+                        input.value = '0';
+                        input.onchange = () => updateTotal(studentId);
+                        cell.appendChild(input);
+                        if (week === weeks) {
+                            cell.className = 'month-group';
+                        }
+                        row.appendChild(cell);
+                    }
+                }
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateTotal(studentId) {
+            let total = parseInt(document.getElementById(`${studentId}-initial`).value) || 0;
+
+            for (let month of ['6', '7', '8', '9', '10', '11', '12']) {
+                const weeks = weeksPerMonth[month];
+                for (let week = 1; week <= weeks; week++) {
+                    const val = parseInt(document.getElementById(`${studentId}-${month}-${week}`).value) || 0;
+                    total += val;
+                }
+            }
+
+            document.getElementById(`${studentId}-total`).textContent = total;
+        }
+
+        function showStatus(type, message) {
+            const el = document.getElementById('status');
+            el.className = 'status show ' + type;
+            el.textContent = message;
+        }
+
+        // 페이지 로드 시 데이터 불러오기
+        function loadTalents() {
+            fetch('/get-talents')
+                .then(r => {
+                    if (!r.ok) throw new Error('API not available');
+                    return r.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const talents = data.talents;
+                        students.forEach(studentId => {
+                            if (talents[studentId]) {
+                                const studentData = talents[studentId];
+                                document.getElementById(`${studentId}-initial`).value = studentData.initial || 0;
+
+                                if (studentData.weeks) {
+                                    for (let [key, value] of Object.entries(studentData.weeks)) {
+                                        const inputId = `${studentId}-${key}`;
+                                        const input = document.getElementById(inputId);
+                                        if (input) {
+                                            input.value = value || 0;
+                                        }
+                                    }
+                                }
+
+                                updateTotal(studentId);
+                            }
+                        });
+                        showStatus('success', '✅ 데이터를 불러왔습니다!');
+                    } else {
+                        showStatus('error', '❌ 오류: ' + data.message);
+                    }
+                })
+                .catch(e => {
+                    // API 불가능 시 로컬 파일에서 로드
+                    console.log('로컬 데이터 로드 시도...');
+                    loadTalentsFromJSON();
+                });
+        }
+
+        function loadTalentsFromJSON() {
+            fetch('/get-talents')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const talents = data.talents;
+                        students.forEach(studentId => {
+                            if (talents[studentId]) {
+                                const studentData = talents[studentId];
+                                document.getElementById(`${studentId}-initial`).value = studentData.initial || 0;
+
+                                if (studentData.weeks) {
+                                    for (let [key, value] of Object.entries(studentData.weeks)) {
+                                        const inputId = `${studentId}-${key}`;
+                                        const input = document.getElementById(inputId);
+                                        if (input) {
+                                            input.value = value || 0;
+                                        }
+                                    }
+                                }
+
+                                updateTotal(studentId);
+                            }
+                        });
+                        showStatus('success', '✅ 데이터를 불러왔습니다!');
+                    } else {
+                        showStatus('error', '❌ ' + data.message);
+                    }
+                })
+                .catch(e => {
+                    console.error('오류:', e);
+                    showStatus('error', '❌ 데이터를 불러올 수 없습니다');
+                });
+        }
+
+        // 데이터 저장 및 배포
+        function saveTalents() {
+            const talentsData = {};
+
+            students.forEach(studentId => {
+                talentsData[studentId] = {
+                    initial: parseInt(document.getElementById(`${studentId}-initial`).value) || 0,
+                    weeks: {}
+                };
+
+                for (let month of ['6', '7', '8', '9', '10', '11', '12']) {
+                    const weeks = weeksPerMonth[month];
+                    for (let week = 1; week <= weeks; week++) {
+                        const key = `${month}-${week}`;
+                        talentsData[studentId].weeks[key] = parseInt(document.getElementById(`${studentId}-${month}-${week}`).value) || 0;
+                    }
+                }
+            });
+
+            showStatus('loading', '⏳ 데이터를 저장하는 중...');
+
+            fetch('/save-talents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ talents: talentsData })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('loading', '⏳ GitHub에 배포하는 중...');
+
+                        return fetch('/run-git-push')
+                            .then(r => r.json())
+                            .then(deployData => {
+                                if (deployData.success) {
+                                    showStatus('success', '✅ 저장 완료! GitHub에 배포되었습니다. (1-3분 후 반영)');
+                                } else {
+                                    showStatus('success', '✅ 저장되었습니다! (배포: ' + deployData.message + ')');
+                                }
+                            });
+                    } else {
+                        showStatus('error', '❌ 오류: ' + data.message);
+                    }
+                })
+                .catch(e => {
+                    console.error('오류:', e);
+                    showStatus('error', '❌ 오류: ' + e.message);
+                });
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', function() {
+            generateTableRows();
+            // talents_data.json에서 직접 로드
+            loadTalentsFromJSON();
+        });
+    </script>
+</body>
+</html>

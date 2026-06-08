@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>달란트 - 한영교회 주일학교</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 네비게이션 */
+        nav {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 제목 */
+        h1 {
+            text-align: center;
+            color: #3B5998;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        /* 통계 */
+        .stats {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats h2 {
+            color: #3B5998;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #F57C00;
+            font-size: 1.1em;
+        }
+
+        /* 랭킹 테이블 */
+        .ranking-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            color: white;
+        }
+
+        th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .rank {
+            font-weight: 600;
+            color: #3B5998;
+            min-width: 50px;
+        }
+
+        .name {
+            font-weight: 600;
+        }
+
+        .talent-count {
+            font-weight: bold;
+            color: #F57C00;
+            font-size: 1.2em;
+        }
+
+        /* 학생 카드 */
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .student-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .student-avatar.junyoung { background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%); }
+        .student-avatar.yerim { background: linear-gradient(135deg, #8B6BB8 0%, #C2185B 100%); }
+        .student-avatar.joshua { background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); }
+        .student-avatar.elliot { background: linear-gradient(135deg, #F57C00 0%, #FFA726 100%); }
+        .student-avatar.anna { background: linear-gradient(135deg, #C2185B 0%, #E91E63 100%); }
+        .student-avatar.moses { background: linear-gradient(135deg, #E53935 0%, #F44336 100%); }
+
+        .student-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #3B5998;
+            margin-bottom: 10px;
+        }
+
+        .student-talent {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #F57C00;
+        }
+
+        .student-talent-label {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #3B5998;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .students-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 홈</a></li>
+            <li><a href="learning.html">📚 학습자료</a></li>
+            <li><a href="talents.html">⭐ 달란트</a></li>
+        </ul>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <h1>⭐ 달란트</h1>
+
+        <!-- 학생 카드 -->
+        <div class="students-grid" id="studentsGrid">
+            <!-- 학생 카드가 여기에 표시됩니다 -->
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer>
+        <p>&copy; 2024 한영교회 주일학교. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const students = [
+            { id: 'junyoung', name: 'Junyoung', initial: 'J' },
+            { id: 'yerim', name: 'Yerim', initial: 'Y' },
+            { id: 'joshua', name: 'Joshua', initial: 'Jo' },
+            { id: 'elliot', name: 'Elliot', initial: 'E' },
+            { id: 'anna', name: 'Anna', initial: 'A' },
+            { id: 'moses', name: 'Moses', initial: 'M' }
+        ];
+
+        // 달란트 데이터 로드 (로컬/GitHub Pages 모두 지원)
+        function loadTalents() {
+            // 먼저 /get-talents API 시도 (로컬 서버)
+            fetch('/get-talents')
+                .then(r => {
+                    if (!r.ok) throw new Error('API not available');
+                    return r.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        displayTalents(data.talents);
+                    }
+                })
+                .catch(e => {
+                    // API 실패 시 talents_data.json 직접 로드 (GitHub Pages)
+                    console.log('API not available, loading JSON directly');
+                    fetch('talents_data.json')
+                        .then(r => r.json())
+                        .then(talents => {
+                            displayTalents(talents);
+                        })
+                        .catch(e => console.error('오류:', e));
+                });
+        }
+
+        // 누적 달란트 계산
+        function getTotalTalent(studentData) {
+            if (!studentData) return 0;
+            let total = studentData.initial || 0;
+            if (studentData.weeks) {
+                for (let value of Object.values(studentData.weeks)) {
+                    total += value || 0;
+                }
+            }
+            return total;
+        }
+
+        // 달란트 데이터 표시
+        function displayTalents(talents) {
+            // 학생 카드
+            const grid = document.getElementById('studentsGrid');
+            grid.innerHTML = students.map(s => `
+                <div class="student-card">
+                    <div class="student-avatar ${s.id}">${s.initial}</div>
+                    <div class="student-name">${s.name}</div>
+                    <div class="student-talent">${getTotalTalent(talents[s.id])}</div>
+                    <div class="student-talent-label">달란트</div>
+                </div>
+            `).join('');
+        }
+
+        // 페이지 로드 시 데이터 로드
+        window.addEventListener('load', loadTalents);
+
+        // 주기적으로 새로고침 (5초마다)
+        setInterval(loadTalents, 5000);
+    </script>
+</body>
+</html>

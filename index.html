@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한영교회 주일학교</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 네비게이션 */
+        nav {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            background: white;
+            padding: 50px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #3B5998;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header .church-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        /* 섹션 */
+        .section {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #3B5998;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 15px;
+        }
+
+        /* 주일학교 소개 */
+        .intro-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .intro-text h3 {
+            color: #8B6BB8;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .intro-text ul {
+            list-style: none;
+            margin-left: 20px;
+        }
+
+        .intro-text li {
+            margin: 15px 0;
+            color: #555;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .intro-text li:before {
+            content: "✓ ";
+            color: #FFD700;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* 학생 아이콘 */
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .student-card {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .student-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .student-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+            font-size: 2em;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .student-card:hover .student-icon {
+            transform: scale(1.1);
+        }
+
+        .student-icon.junyoung { background: linear-gradient(135deg, #3B5998 0%, #2E4A7A 100%); }
+        .student-icon.yerim { background: linear-gradient(135deg, #8B6BB8 0%, #6B4D8D 100%); }
+        .student-icon.joshua { background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); }
+        .student-icon.elliot { background: linear-gradient(135deg, #F57C00 0%, #D84315 100%); }
+        .student-icon.anna { background: linear-gradient(135deg, #C2185B 0%, #880E4F 100%); }
+        .student-icon.moses { background: linear-gradient(135deg, #E53935 0%, #B71C1C 100%); }
+
+        .student-name {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        /* 기능 버튼 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 30px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 89, 152, 0.3);
+        }
+
+        .feature-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #3B5998;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .intro-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            nav ul {
+                gap: 20px;
+            }
+
+            nav a {
+                font-size: 0.95em;
+            }
+
+            .students-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 20px;
+            }
+
+            .student-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 홈</a></li>
+            <li><a href="learning.html">📚 학습자료</a></li>
+            <li><a href="talents.html">⭐ 달란트</a></li>
+        </ul>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="church-icon">⛪</div>
+            <h1>한영교회 주일학교</h1>
+            <p>English Sunday School</p>
+            <p style="margin-top: 15px; color: #888; font-size: 1em;">
+                성경과 영어를 함께 배우며 영적으로 성장하는 곳
+            </p>
+        </div>
+
+        <!-- 주일학교 소개 -->
+        <div class="section">
+            <h2>📖 주일학교 소개</h2>
+            <div class="intro-content">
+                <div class="intro-text">
+                    <h3>주일마다 진행되는 학습</h3>
+                    <ul>
+                        <li>BJUP Bible 교과 내용에 따른 주제별 동영상 학습</li>
+                        <li>Words to Memorize (영단어 학습)</li>
+                        <li>Dictation (영어 문장 받아쓰기)</li>
+                        <li>Today's Lesson (교훈 생각해보기)</li>
+                    </ul>
+                </div>
+                <div class="intro-text">
+                    <h3>학습 방식</h3>
+                    <ul>
+                        <li>매주 새로운 주제로 학습</li>
+                        <li>개인 학습지에 내용 작성</li>
+                        <li>학습 파일로 체계적 관리</li>
+                        <li>참여도에 따른 달란트 수여</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학생 소개 -->
+        <div class="section">
+            <h2>👥 학생 소개</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                6명의 영어 주일학교 학생들입니다 😊
+            </p>
+            <div class="students-grid">
+                <div class="student-card">
+                    <div class="student-icon junyoung">J</div>
+                    <div class="student-name">Junyoung</div>
+                </div>
+                <div class="student-card">
+                    <div class="student-icon yerim">Y</div>
+                    <div class="student-name">Yerim</div>
+                </div>
+                <div class="student-card">
+                    <div class="student-icon joshua">Jo</div>
+                    <div class="student-name">Joshua</div>
+                </div>
+                <div class="student-card">
+                    <div class="student-icon elliot">E</div>
+                    <div class="student-name">Elliot</div>
+                </div>
+                <div class="student-card">
+                    <div class="student-icon anna">A</div>
+                    <div class="student-name">Anna</div>
+                </div>
+                <div class="student-card">
+                    <div class="student-icon moses">M</div>
+                    <div class="student-name">Moses</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 주요 기능 -->
+        <div class="section">
+            <h2>🎯 주요 기능</h2>
+            <div class="features">
+                <a href="learning.html" class="feature-card">
+                    <div class="icon">📚</div>
+                    <h3>학습자료</h3>
+                    <p>각 학생의 주간 학습지를 확인하세요</p>
+                </a>
+                <a href="talents.html" class="feature-card">
+                    <div class="icon">⭐</div>
+                    <h3>달란트</h3>
+                    <p>학생별 달란트 개수를 확인하세요</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer>
+        <p>&copy; 2024 한영교회 주일학교. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">
+            영어와 성경을 함께 배우며 성장하는 우리 함께 해요! 🙏
+        </p>
+    </footer>
+</body>
+</html>

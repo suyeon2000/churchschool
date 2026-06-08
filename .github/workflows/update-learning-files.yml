@@ -1,0 +1,42 @@
+name: 학습자료 자동 업데이트
+
+# 이 워크플로우는 main 브랜치에 푸시될 때 실행됩니다
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'picture/**'
+      - '.github/workflows/update-learning-files.yml'
+
+jobs:
+  update-learning:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 저장소의 코드를 체크아웃
+    - uses: actions/checkout@v3
+
+    # Python 설정
+    - name: Python 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    # update_learning_files.py 스크립트 실행
+    - name: 학습자료 업데이트 스크립트 실행
+      run: python update_learning_files.py
+
+    # 변경사항이 있으면 자동으로 커밋 및 푸시
+    - name: Git 변경사항 확인 및 푸시
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add learning.html
+
+        # 변경사항이 있는지 확인
+        if git diff-index --quiet HEAD --; then
+          echo "변경사항 없음"
+        else
+          git commit -m "🔄 학습자료 자동 업데이트 (GitHub Actions)"
+          git push
+        fi
