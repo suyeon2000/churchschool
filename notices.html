@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - 한영교회 주일학교</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            color: #3B5998;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .notice-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .notice-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .notice-header {
+            background: linear-gradient(135deg, #3B5998 0%, #8B6BB8 100%);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notice-number {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+
+        .notice-date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+        }
+
+        .notice-body {
+            padding: 25px;
+        }
+
+        .notice-title {
+            color: #3B5998;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .notice-content {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1em;
+        }
+
+        .notice-author {
+            margin-top: 15px;
+            color: #888;
+            font-size: 0.9em;
+            text-align: right;
+        }
+
+        .empty-notice {
+            text-align: center;
+            background: white;
+            padding: 60px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-notice .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-notice p {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 홈</a></li>
+            <li><a href="notices.html">📢 공지사항</a></li>
+            <li><a href="learning.html">📚 학습자료</a></li>
+            <li><a href="talents.html">⭐ 달란트</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📢 공지사항</h1>
+            <p>선생님이 올리는 중요한 소식을 확인하세요!</p>
+        </div>
+
+        <div class="notice-list" id="noticeList">
+            <div class="loading">⏳ 공지사항을 불러오는 중...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadNotices() {
+            const list = document.getElementById('noticeList');
+
+            try {
+                const res = await fetch('notices.json');
+                const notices = await res.json();
+
+                if (!notices || notices.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-notice">
+                            <div class="icon">📭</div>
+                            <p>아직 공지사항이 없어요!</p>
+                        </div>`;
+                    return;
+                }
+
+                // 최신 공지부터 보여주기
+                const sorted = [...notices].reverse();
+
+                list.innerHTML = sorted.map((notice, idx) => `
+                    <div class="notice-card">
+                        <div class="notice-header">
+                            <span class="notice-number">공지 #${notices.length - idx}</span>
+                            <span class="notice-date">📅 ${notice.date}</span>
+                        </div>
+                        <div class="notice-body">
+                            <div class="notice-title">${notice.title}</div>
+                            <div class="notice-content">${notice.content.replace(/\n/g, '<br>')}</div>
+                            <div class="notice-author">✍️ ${notice.author}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                list.innerHTML = `
+                    <div class="empty-notice">
+                        <div class="icon">😅</div>
+                        <p>공지사항을 불러오지 못했어요.<br>서버가 실행 중인지 확인해 주세요!</p>
+                    </div>`;
+            }
+        }
+
+        loadNotices();
+    </script>
+</body>
+</html>

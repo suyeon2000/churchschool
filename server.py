@@ -138,7 +138,7 @@ def index():
                     📤 GitHub에 배포
                 </button>
                 <a href="/admin.html" class="tool-btn btn-admin">
-                    🔐 달란트 관리
+                    🔐 달란트 및 공지사항 관리
                 </a>
             </div>
 
@@ -275,6 +275,94 @@ def run_git_push():
             return jsonify({'success': False, 'message': f'Git 오류: {error_msg}'})
     except Exception as e:
         return jsonify({'success': False, 'message': f'오류: {str(e)}'})
+
+@app.route('/get-notices')
+def get_notices():
+    try:
+        notices_file = os.path.join(PROJECT_DIR, 'notices.json')
+        if not os.path.exists(notices_file):
+            return jsonify({'success': True, 'notices': []})
+        with open(notices_file, 'r', encoding='utf-8') as f:
+            notices = json.load(f)
+        return jsonify({'success': True, 'notices': notices})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'오류: {str(e)}'})
+
+@app.route('/save-notice', methods=['POST'])
+def save_notice():
+    try:
+        data = request.get_json()
+        notices_file = os.path.join(PROJECT_DIR, 'notices.json')
+        if os.path.exists(notices_file):
+            with open(notices_file, 'r', encoding='utf-8') as f:
+                notices = json.load(f)
+        else:
+            notices = []
+        new_id = max([n['id'] for n in notices], default=0) + 1
+        new_notice = {
+            'id': new_id,
+            'title': data.get('title', ''),
+            'content': data.get('content', ''),
+            'date': data.get('date', ''),
+            'author': data.get('author', '선생님')
+        }
+        notices.append(new_notice)
+        with open(notices_file, 'w', encoding='utf-8') as f:
+            json.dump(notices, f, ensure_ascii=False, indent=2)
+        return jsonify({'success': True, 'message': '공지사항이 저장되었습니다.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'오류: {str(e)}'})
+
+@app.route('/update-notice', methods=['POST'])
+def update_notice():
+    try:
+        data = request.get_json()
+        notice_id = data.get('id')
+        notices_file = os.path.join(PROJECT_DIR, 'notices.json')
+        with open(notices_file, 'r', encoding='utf-8') as f:
+            notices = json.load(f)
+        for n in notices:
+            if n['id'] == notice_id:
+                n['title'] = data.get('title', n['title'])
+                n['content'] = data.get('content', n['content'])
+                n['author'] = data.get('author', n['author'])
+                break
+        with open(notices_file, 'w', encoding='utf-8') as f:
+            json.dump(notices, f, ensure_ascii=False, indent=2)
+        return jsonify({'success': True, 'message': '공지사항이 수정되었습니다.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'오류: {str(e)}'})
+
+@app.route('/delete-notice', methods=['POST'])
+def delete_notice():
+    try:
+        data = request.get_json()
+        notice_id = data.get('id')
+        notices_file = os.path.join(PROJECT_DIR, 'notices.json')
+        with open(notices_file, 'r', encoding='utf-8') as f:
+            notices = json.load(f)
+        notices = [n for n in notices if n['id'] != notice_id]
+        with open(notices_file, 'w', encoding='utf-8') as f:
+            json.dump(notices, f, ensure_ascii=False, indent=2)
+        return jsonify({'success': True, 'message': '공지사항이 삭제되었습니다.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'오류: {str(e)}'})
+
+@app.route('/notices.html')
+def notices_page():
+    return read_html_file('notices.html')
+
+@app.route('/notices.json')
+def notices_json():
+    try:
+        notices_file = os.path.join(PROJECT_DIR, 'notices.json')
+        if not os.path.exists(notices_file):
+            return jsonify([])
+        with open(notices_file, 'r', encoding='utf-8') as f:
+            notices = json.load(f)
+        return jsonify(notices)
+    except Exception as e:
+        return jsonify([])
 
 @app.route('/get-talents')
 def get_talents():
