@@ -265,8 +265,17 @@ def run_git_push():
         # 2. git commit
         subprocess.run(['git', 'commit', '-m', '새 학습자료 추가', '--allow-empty'], capture_output=True, text=True, timeout=10)
 
-        # 3. git push
-        result = subprocess.run(['git', 'push', 'origin', 'main'], capture_output=True, text=True, timeout=30)
+        # 3. GitHub에 먼저 올라온 변경사항 가져오기 (웹에서 수정한 내용 등과 합치기)
+        pull = subprocess.run(['git', 'pull', '--rebase', '--autostash', 'origin', 'main'],
+                              capture_output=True, text=True, timeout=60)
+        if pull.returncode != 0:
+            # 충돌 등으로 실패하면 되돌려서 로컬 파일이 망가지지 않게 함
+            subprocess.run(['git', 'rebase', '--abort'], capture_output=True, text=True, timeout=10)
+            detail = pull.stderr if pull.stderr else pull.stdout
+            return jsonify({'success': False, 'message': 'GitHub의 최신 내용과 합치는 중 충돌이 발생했습니다. 배포를 중단했습니다. (로컬 파일은 그대로입니다)\n' + detail})
+
+        # 4. git push
+        result = subprocess.run(['git', 'push', 'origin', 'main'], capture_output=True, text=True, timeout=60)
 
         if result.returncode == 0:
             return jsonify({'success': True, 'message': 'GitHub에 업로드되었습니다! 1-3분 후 GitHub Pages에 반영됩니다.'})
